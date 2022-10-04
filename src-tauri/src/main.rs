@@ -1,10 +1,15 @@
 #![cfg_attr(
-  all(not(debug_assertions), target_os = "windows"),
-  windows_subsystem = "windows"
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
 )]
 
+use app::{__cmd__show_posts, establish_connection, posts::show_posts::show_posts};
+
 fn main() {
-  tauri::Builder::default()
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+    let connection = establish_connection();
+    tauri::Builder::default()
+        .manage(connection)
+        .invoke_handler(tauri::generate_handler![show_posts])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }
