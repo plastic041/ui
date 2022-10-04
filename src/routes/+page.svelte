@@ -15,6 +15,8 @@
 		);
 	};
 
+	const makePosts = () => invoke('make_posts');
+
 	let posts: Post[] = [];
 	$: {
 		invoke('show_posts', {
@@ -28,6 +30,7 @@
 </script>
 
 <main>
+	<button on:click={makePosts}>make</button>
 	<input type="text" bind:value={$searchQuery} />
 
 	<ul>
@@ -45,6 +48,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+		padding-top: 4rem;
 	}
 
 	ul {

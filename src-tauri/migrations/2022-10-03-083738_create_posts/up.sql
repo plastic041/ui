@@ -1,17 +1,17 @@
 CREATE TABLE posts (
-  id INTEGER PRIMARY KEY NOT NULL,
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   title TEXT NOT NULL
 );
 
-INSERT INTO posts (id, title) VALUES (1, 'apple');
-INSERT INTO posts (id, title) VALUES (2, 'banana');
-INSERT INTO posts (id, title) VALUES (3, 'cherry');
-INSERT INTO posts (id, title) VALUES (4, 'date');
-INSERT INTO posts (id, title) VALUES (5, 'elderberry');
-INSERT INTO posts (id, title) VALUES (6, 'abcdefg');
-INSERT INTO posts (id, title) VALUES (7, 'aacdefg');
-INSERT INTO posts (id, title) VALUES (8, 'aaadefg');
-INSERT INTO posts (id, title) VALUES (9, 'aaaaefg');
-INSERT INTO posts (id, title) VALUES (10, 'aaaaafg');
-INSERT INTO posts (id, title) VALUES (11, 'aaaaaag');
-INSERT INTO posts (id, title) VALUES (12, 'aaaaaaa');
+INSERT INTO posts (title) VALUES ('apple');
+INSERT INTO posts (title) VALUES ('banana');
+INSERT INTO posts (title) VALUES ('cherry');
+INSERT INTO posts (title) VALUES ('durian');
+INSERT INTO posts (title) VALUES ('elderberry');
+INSERT INTO posts (title) VALUES ('fig');
+INSERT INTO posts (title) VALUES ('grape');
+INSERT INTO posts (title) VALUES ('honeydew');
+INSERT INTO posts (title) VALUES ('ice plant');
+INSERT INTO posts (title) VALUES ('jackfruit');
+INSERT INTO posts (title) VALUES ('kiwi');
+INSERT INTO posts (title) VALUES ('lemon');

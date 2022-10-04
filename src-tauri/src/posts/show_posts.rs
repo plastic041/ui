@@ -8,7 +8,7 @@ use diesel::{QueryDsl, RunQueryDsl};
 pub fn show_posts(filter_title: String, state: tauri::State<SqlitePool>) -> Vec<Post> {
     posts
         .filter(title.like(format!("%{}%", filter_title)))
-        .limit(5)
+        // .limit(5)
         .load::<Post>(&mut *state.get().unwrap())
         .expect("Error loading posts")
 }
