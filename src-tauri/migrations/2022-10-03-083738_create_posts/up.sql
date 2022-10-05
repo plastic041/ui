@@ -3,15 +3,15 @@ CREATE TABLE posts (
   title TEXT NOT NULL
 );
 
-INSERT INTO posts (title) VALUES ('apple');
-INSERT INTO posts (title) VALUES ('banana');
-INSERT INTO posts (title) VALUES ('cherry');
-INSERT INTO posts (title) VALUES ('durian');
-INSERT INTO posts (title) VALUES ('elderberry');
-INSERT INTO posts (title) VALUES ('fig');
-INSERT INTO posts (title) VALUES ('grape');
-INSERT INTO posts (title) VALUES ('honeydew');
-INSERT INTO posts (title) VALUES ('ice plant');
-INSERT INTO posts (title) VALUES ('jackfruit');
-INSERT INTO posts (title) VALUES ('kiwi');
-INSERT INTO posts (title) VALUES ('lemon');
+CREATE TABLE tags (
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  name TEXT NOT NULL,
+  post_id INTEGER NOT NULL,
+  FOREIGN KEY (post_id) REFERENCES posts(id)
+);
+
+INSERT INTO posts (id, title) VALUES (0, 'apple');
+INSERT INTO posts (id, title) VALUES (1, 'banana');
+INSERT INTO posts (id, title) VALUES (2, 'cherry');
+INSERT INTO posts (id, title) VALUES (3, 'durian');
+INSERT INTO posts (id, title) VALUES (4, 'elderberry');

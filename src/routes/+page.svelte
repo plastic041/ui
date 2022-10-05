@@ -15,13 +15,14 @@
 		);
 	};
 
-	const makePosts = () => invoke('make_posts');
+	const makePosts = () => invoke('make_tags');
 
 	let posts: Post[] = [];
 	$: {
 		invoke('show_posts', {
-			filterTitle: $searchQuery
+			filterName: $searchQuery
 		}).then((res) => {
+			console.log(res);
 			if (isPosts(res)) {
 				posts = res;
 			}
