@@ -20,9 +20,8 @@
 	let posts: Post[] = [];
 	$: {
 		invoke('show_posts', {
-			filterName: $searchQuery
+			filterNames: $searchQuery.split(' ')
 		}).then((res) => {
-			console.log(res);
 			if (isPosts(res)) {
 				posts = res;
 			}

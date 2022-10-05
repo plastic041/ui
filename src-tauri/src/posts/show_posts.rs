@@ -1,17 +1,3 @@
-// use crate::models::Post;
-// use crate::schema::posts::dsl::*;
-// use crate::SqlitePool;
-// use diesel::prelude::*;
-
-// #[tauri::command]
-// pub fn show_posts(filter_title: String, state: tauri::State<SqlitePool>) -> Vec<Post> {
-//     posts
-//         .filter(title.like(format!("%{}%", filter_title)))
-//         // .limit(5)
-//         .load::<Post>(&mut *state.get().unwrap())
-//         .expect("Error loading posts")
-// }
-
 use crate::models::{Post, Tag};
 use crate::schema::posts::dsl::{id, posts};
 use crate::schema::tags::dsl::{name, tags};
@@ -19,11 +5,16 @@ use crate::SqlitePool;
 use diesel::prelude::*;
 
 #[tauri::command]
-pub fn show_posts(filter_name: String, state: tauri::State<SqlitePool>) -> Vec<Post> {
+pub fn show_posts(filter_names: Vec<String>, state: tauri::State<SqlitePool>) -> Vec<Post> {
     let tags_found = tags
-        .filter(name.like(format!("%{}%", filter_name)))
+        .filter(name.eq_any(filter_names))
         .load::<Tag>(&mut *state.get().unwrap())
         .expect("Error loading tags");
+
+    // let tags_found = tags
+    //     .filter(name.like(format!("%{}%", filter_name)))
+    //     .load::<Tag>(&mut *state.get().unwrap())
+    //     .expect("Error loading tags");
 
     // get ids of tags found
     let mut tag_ids = Vec::new();
