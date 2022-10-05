@@ -6,10 +6,19 @@ use diesel::prelude::*;
 
 #[tauri::command]
 pub fn show_posts(filter_names: Vec<String>, state: tauri::State<SqlitePool>) -> Vec<Post> {
-    let tags_found = tags
-        .filter(name.eq_any(filter_names))
-        .load::<Tag>(&mut *state.get().unwrap())
-        .expect("Error loading tags");
+    let mut tags_found = Vec::new();
+    for filter_name in filter_names {
+        let tag_found = tags
+            .filter(name.eq(filter_name))
+            .first::<Tag>(&mut *state.get().unwrap())
+            .expect("Error loading tag");
+        tags_found.push(tag_found);
+    }
+    // let tags_found = tags
+    //     // filter using WHERE clause with AND
+    //     .filter(name.eq_any(filter_names))
+    //     .load::<Tag>(&mut *state.get().unwrap())
+    //     .expect("Error loading tags");
 
     // let tags_found = tags
     //     .filter(name.like(format!("%{}%", filter_name)))
