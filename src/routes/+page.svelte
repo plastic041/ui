@@ -15,8 +15,6 @@
 		);
 	};
 
-	const makePosts = () => invoke('make_tags');
-
 	let posts: Post[] = [];
 	$: {
 		invoke('show_posts', {
@@ -30,7 +28,6 @@
 </script>
 
 <main>
-	<button on:click={makePosts}>make</button>
 	<input type="text" bind:value={$searchQuery} />
 
 	<ul>
