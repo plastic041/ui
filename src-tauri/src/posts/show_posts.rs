@@ -28,35 +28,14 @@ pub fn show_posts(filter_names: Vec<String>, state: tauri::State<SqlitePool>) ->
 
     println!("{:?} tags query ids", tags_query_ids);
 
-    let mut post_tags_boxed = post_tags.into_boxed();
-    for tags_query_id in tags_query_ids {
-        post_tags_boxed = post_tags_boxed.filter(tag_id.eq(tags_query_id));
+    // diesel where AND clause
+    let mut posts_query = posts.into_boxed();
+    for tag_query_id in tags_query_ids {
+        posts_query =
+            posts_query.filter(id.eq_any(post_tags.select(post_id).filter(tag_id.eq(tag_query_id))))
     }
-    let posts_ids: Vec<i32> = post_tags_boxed
-        .select(post_id)
-        .load::<i32>(&mut connection)
-        .unwrap();
 
-    println!("{:?} posts ids", posts_ids);
-
-    let posts_query: Vec<Post> = posts
-        .filter(id.eq_any(posts_ids))
-        .distinct()
-        .load::<Post>(&mut connection)
-        .unwrap();
-
-    println!("{:?} posts query", posts_query);
-
-    vec![
-        Post {
-            id: 1,
-            title: "Hello".to_string(),
-        },
-        Post {
-            id: 2,
-            title: "World".to_string(),
-        },
-    ]
+    posts_query.load::<Post>(&mut connection).unwrap()
 
     // let mut post_tags_ids: Vec<i32> = Vec::new();
     // for tag in tags_query {
