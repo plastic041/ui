@@ -1,46 +1,106 @@
-use crate::models::{Post, PostTag, Tag};
-use crate::schema::posts::dsl::{id, posts, title};
+use crate::models::{Post, Tag};
+use crate::schema::post_tags::dsl::{post_id, post_tags, tag_id};
+use crate::schema::posts::dsl::{id, posts};
 use crate::schema::tags::dsl::{name, tags};
 use crate::SqlitePool;
 use diesel::prelude::*;
-use diesel::BelongingToDsl;
 
 #[tauri::command]
 pub fn show_posts(filter_names: Vec<String>, state: tauri::State<SqlitePool>) -> Vec<Post> {
-    let mut tags_query = tags.into_boxed();
+    let mut connection = state.get().unwrap();
+
+    let mut tags_query_ids: Vec<i32> = Vec::new();
     for filter_name in filter_names {
-        tags_query = tags_query.filter(name.like(format!("%{}%", filter_name)));
+        let tag = tags
+            .filter(name.like(format!("{}%", filter_name)))
+            .load::<Tag>(&mut connection);
+        match tag {
+            Ok(tag) => {
+                for t in tag {
+                    if !tags_query_ids.contains(&t.id) {
+                        tags_query_ids.push(t.id);
+                    }
+                }
+            }
+            Err(_) => continue,
+        }
     }
-    let tags_found: Vec<Tag> = tags_query
-        .load(&mut *state.get().unwrap())
-        .expect("Error loading tags");
 
-    println!("{:?}", tags_found);
+    println!("{:?} tags query ids", tags_query_ids);
 
-    let res: Vec<Post> = PostTag::belonging_to(&tags_found)
-        .inner_join(posts)
-        .select((id, title))
-        .load(&mut *state.get().unwrap())
-        .expect("Error loading posts");
+    let mut post_tags_boxed = post_tags.into_boxed();
+    for tags_query_id in tags_query_ids {
+        post_tags_boxed = post_tags_boxed.filter(tag_id.eq(tags_query_id));
+    }
+    let posts_ids: Vec<i32> = post_tags_boxed
+        .select(post_id)
+        .load::<i32>(&mut connection)
+        .unwrap();
 
-    res
+    println!("{:?} posts ids", posts_ids);
+
+    let posts_query: Vec<Post> = posts
+        .filter(id.eq_any(posts_ids))
+        .distinct()
+        .load::<Post>(&mut connection)
+        .unwrap();
+
+    println!("{:?} posts query", posts_query);
+
+    vec![
+        Post {
+            id: 1,
+            title: "Hello".to_string(),
+        },
+        Post {
+            id: 2,
+            title: "World".to_string(),
+        },
+    ]
+
+    // let mut post_tags_ids: Vec<i32> = Vec::new();
+    // for tag in tags_query {
+    //     let post_tags = PostTag::belonging_to(&tag)
+    //         .load::<PostTag>(&mut connection)
+    //         .unwrap();
+    //     for post_tag in post_tags {
+    //         post_tags_ids.push(post_tag.post_id);
+    //     }
+    // }
+    // println!("{:?}", post_tags_ids);
 
     // let mut posts_query = posts.into_boxed();
-    // for tag in tags_found {
-    //     posts_query = posts_query.filter(id.eq(tag.id));
+    // for post_tag_id in post_tags_ids {
+    //     posts_query = posts_query.or_filter(id.eq(post_tag_id));
     // }
+    // let posts_query = posts_query.load::<Post>(&mut connection).unwrap();
 
-    // // get ids of tags found
-    // let mut tag_ids = Vec::new();
-    // for tag in tags_found {
-    //     // handle duplicates
-    //     if !tag_ids.contains(&tag.post_id) {
-    //         tag_ids.push(tag.post_id);
+    // for tag in tags_query {
+    //     let post_tags: Vec<PostTag> = PostTag::belonging_to(&tag)
+    //         .load::<PostTag>(&mut connection)
+    //         .unwrap();
+
+    //     println!("{:?}", post_tags);
+    //     for post_tag in post_tags {
+    //         let post = posts
+    //             .filter(id.eq(post_tag.post_id))
+    //             .first::<Post>(&mut connection)
+    //             .unwrap();
+    //         posts_query.push(post);
     //     }
     // }
 
-    // posts
-    //     .filter(id.eq_any(tag_ids))
-    //     .load::<Post>(&mut *state.get().unwrap())
-    //     .expect("Error loading posts")
+    // posts_query
+
+    // let mut posts_ids = Vec::new();
+    // for tag_id in tags_ids {
+    //     let post_tags = PostTag::belonging_to(&tag_id)
+    //         .load::<PostTag>(&mut connection)
+    //         .unwrap();
+    //     for post_tag in post_tags {
+    //         posts_ids.push(post_tag.post_id);
+    //     }
+    // }
+
+    // println!("{:?}", posts_ids);
 }

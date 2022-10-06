@@ -18,7 +18,7 @@
 	let posts: Post[] = [];
 	$: {
 		invoke('show_posts', {
-			filterNames: $searchQuery.split(' ')
+			filterNames: $searchQuery.trim().split(' ')
 		}).then((res) => {
 			if (isPosts(res)) {
 				posts = res;
@@ -29,6 +29,7 @@
 
 <main>
 	<input type="text" bind:value={$searchQuery} />
+	<code>{JSON.stringify($searchQuery.trim().split(' '), null, 2)}</code>
 
 	<ul>
 		{#each posts as post}

@@ -2,7 +2,7 @@ use crate::schema::{post_tags, posts, tags};
 use diesel::prelude::*;
 use serde::Serialize;
 
-#[derive(Queryable, Serialize, Identifiable)]
+#[derive(Queryable, Serialize, Identifiable, Debug)]
 #[diesel(table_name = posts)]
 pub struct Post {
     pub id: i32,
@@ -16,7 +16,7 @@ pub struct Tag {
     pub name: String,
 }
 
-#[derive(Identifiable, Queryable, Serialize, Associations)]
+#[derive(Identifiable, Queryable, Serialize, Associations, Debug)]
 #[diesel(belongs_to(Post, foreign_key = post_id))]
 #[diesel(belongs_to(Tag, foreign_key = tag_id))]
 pub struct PostTag {
